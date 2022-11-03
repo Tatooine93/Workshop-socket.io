@@ -6,6 +6,20 @@ The server is developped into `conf.js` inside `io` folder.
 
 By default, the Socket.IO server exposes a client bundle at `/socket.io/socket.io.js`.
 
+## At first...
+
+<br>
+
+- install and start the Node app
+
+  ```
+  cd socket-game/
+  npm install
+  npm run start
+  ```
+
+- open your browser and connect to this URL: `localhost:3000`
+
 <br>
 
 ## Client side `/public/game.js`

@@ -1,14 +1,14 @@
-### CLIENT: /public
+# Game with Socket.io
+We are gonna use HTML5, Node.js et socket.io. to create a real time multiplayers game.
 
-The game is drawn inside a <canvas> in /public/index.html
+The game is drawn inside a `<canvas>` in `/public/index.html`,<br> and developped in `/public/game.js` inside the `public` folder.
+The server is developped into `conf.js` inside `io` folder.
 
-The game is developped in `/public/game.js`
+By default, the Socket.IO server exposes a client bundle at `/socket.io/socket.io.js`.
 
-=> FRONTEND
+<br>
 
-??? "/socket.io/socket.io.js" ???
-
-## Inside `/public/game.js`
+## Client side `/public/game.js`
 
 <br>
 
@@ -93,11 +93,11 @@ The game is developped in `/public/game.js`
   }
   ```
 
-## Inside `/io/conf.js`
+## Server side `/io/conf.js`
 
 <br>
 
-??? ajouter petit explication ???
+In order to have a multiplayers game in real time, we need a server who collect all the informations relative to the players and emit them to for the other players.
 
 <br>
 
@@ -114,7 +114,7 @@ The game is developped in `/public/game.js`
     const players = {};
 
     io.on("connection", function (socket) {
-      //console.log('A player is connected');
+      //console.log('A player is connected, id :socket.id');
       // register new player
       players[socket.id] = {
         x: 0,
@@ -133,22 +133,26 @@ The game is developped in `/public/game.js`
   ```
 
 - Add a function to emit the state of the game (the Players' state) at a 60 fps rate
-  <br>
-  _The "volatile" flag indicates that the package can be lost (disconnection, latency)_
+  
 
-      ```js
-      function update() {
+  ```js
+  //module.exports = function (server) {
+    function update() {
       io.volatile.emit('players list', Object.values(players));
-      }
+    }
 
-      setInterval(update, 1000/60);
-      ```
+    setInterval(update, 1000/60);
+  //};
+  ```
+  _The "volatile" flag indicates that the package can be lost (disconnection, latency)_
+  <br>
 
 ### Client Update `/public/game.js`
 
 <br>
 
-- We don't need the Player creation anymore instead we need the state of all Players in the game
+- We don't need the Player creation anymore instead we need the state of all Players in the game<br>
+
 
   ```js
   const socket = io();
@@ -162,6 +166,7 @@ The game is developped in `/public/game.js`
 
   let players = [];
   ```
+  _If your front is served on the same domain as your server, you can simply use: const socket = io();_
 
 - We need a loot to render (draw) each Players container in the array "Players"
 
@@ -201,15 +206,16 @@ The game is developped in `/public/game.js`
     if (keyboard["ArrowDown"]) socket.emit("move down");
   }
   ```
+  <br>
 
-### Server Update `/io/conf.js`
+## Server Update `/io/conf.js`
 
 <br>
 
 - Finaly on the server side we need to listen to all the Players to update their states
 
   ```js
-  io.on("connection", function (socket) {
+  //io.on("connection", function (socket) {
     //...
     socket.on("move left", function () {
       players[socket.id].x -= players[socket.id].speed;
@@ -223,5 +229,5 @@ The game is developped in `/public/game.js`
     socket.on("move down", function () {
       players[socket.id].y += players[socket.id].speed;
     });
-  });
+  //});
   ```
